@@ -6,6 +6,13 @@
 
 This app is intended to automatically create a corpus for ASR systems using pseudo-labeling.
 
+## Features
+
+- Send links of YouTube content
+- Send direct links to video/audio from remote servers
+- Export labeled data using a console
+- `wav2vec2` or `NeMo` servers as an ASR backend
+
 ## Installing
 
 ### Requirements
