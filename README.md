@@ -81,7 +81,7 @@ cd source
 WGET_PATH=/opt/homebrew/bin/wget YOUTUBE_DL=/opt/homebrew/bin/youtube-dl FFMPEG_PATH=/opt/homebrew/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
 ```
 
-You can set higher value to the `concurrency` argument if you need the system to be more performant.
+You can set a higher value to the `concurrency` argument if you need the system to be more performant.
 
 ### ZeroMQ server
 
