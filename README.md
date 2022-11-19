@@ -44,14 +44,6 @@ pipenv install
 pipenv shell
 ```
 
-### Celery
-
-Run Redis broker via docker:
-
-```bash
-docker run -d -p 6390:6379 redis
-```
-
 ### Apply migrations
 
 ```bash
@@ -75,6 +67,14 @@ python source/manage.py runserver
 After starting the WebUI, open http://127.0.0.1:8000/ in your browser and log in with credentials you have created on the previous step.
 
 #### Celery
+
+Run Redis broker via docker:
+
+```bash
+docker run -d -p 6390:6379 redis
+```
+
+Run the worker:
 
 ```bash
 cd source
