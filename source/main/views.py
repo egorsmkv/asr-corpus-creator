@@ -11,7 +11,7 @@ class IndexPageView(TemplateView):
 
     def get(self, request):
         sysload = psutil.cpu_percent()
-        avgload = psutil.getloadavg()
+        avgload = [round(it, 3) for it in psutil.getloadavg()]
 
         history_queries = SearchHistory.objects.order_by('-id').all()[:5]
 
