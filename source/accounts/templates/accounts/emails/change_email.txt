@@ -1,0 +1,5 @@
+{% load i18n %}
+
+{% trans 'To change your current email address, please follow the link:' %}
+
+{{ uri }}

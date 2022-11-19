@@ -1,0 +1,56 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load bootstrap_pagination %}
+
+{% block content %}
+
+    {% if not utterances %}
+
+    <div class="alert alert-warning">No results</div>
+
+    {% else %}
+
+    Sort:
+    <ul>
+        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=snr">SNR</a> </li>
+        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=length">Length</a> </li>
+    </ul>
+
+    <div class="card mb-2">
+        <div class="card-body">
+            Collection key: <b>{{ collection_key }}</b>
+            <br>
+            Records: <b>{{ count_all }}</b>
+            <br>
+            <br>
+            Summary time: <br>
+            - Seconds: <b>{{ summary_time }}</b> <br>
+            - Minutes: <b>{{ summary_time_min }}</b> <br>
+            - Hours: <b>{{ summary_time_hours }}</b> 
+        </div>
+    </div>
+
+    {% for utterance in utterances %}
+
+    <div class="card mb-2">
+        <div class="card-body">
+            <code>{{ utterance.label }}</code>
+            <br>
+            <br>
+            Length: <b>{{ utterance.length }}</b> sec.
+            <br>
+            SNR: <b>{{ utterance.get_snr_formatted }}</b>
+            <br>
+            <audio controls src="/media/{{ utterance.get_filename_path }}" type="audio/wav">
+                Your browser does not support the <code>audio</code> element.
+            </audio>
+        </div>
+    </div>
+
+    {% endfor %}
+
+    {% bootstrap_paginate utterances size="small" range=5 %}
+
+    {% endif %}
+
+{% endblock %}

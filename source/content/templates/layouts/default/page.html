@@ -1,0 +1,102 @@
+{% load static %}
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% get_current_language as language_code %}
+
+<!DOCTYPE html>
+<html lang="{{ language_code }}">
+<head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="An example of Django project with basic user functionality.">
+    <meta name="author" content="Yehor Smoliakov">
+
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+
+    <title>ASR Speech Corpus Creator</title>
+
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark static-top">
+
+    <a class="navbar-brand" href="/">{% trans 'ASR Corpus Creator' %}</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'corpus:send_link' %}">{% trans 'Send a YouTube link' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'corpus:send_video_link' %}">{% trans 'Send a video link' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'corpus:send_audio_link' %}">{% trans 'Send an audio link' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:change_password' %}">{% trans 'Change password' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:change_profile' %}">{% trans 'Change profile' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:change_email' %}">{% trans 'Change email' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:log_out' %}">{% trans 'Log out' %}</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:log_in' %}">{% trans 'Log in' %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:sign_up' %}">{% trans 'Create an account' %}</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <ul class="navbar-nav">
+            {% if user.is_superuser %}
+            <li class="nav-item"></li>
+                <a class="nav-link" href="{% url 'admin:login' %}">{% trans 'Admin panel' %}</a>
+            </li>
+            {% endif %}
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'change_language' %}">{% trans 'Change language' %}</a>
+            </li>
+        </ul>
+    </div>
+
+</nav>
+
+<div class="container-fluid mt-3">
+
+    {% bootstrap_messages %}
+
+    {% block content %}
+        No content.
+    {% endblock %}
+
+</div>
+
+<script src="{% static 'vendor/jquery/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'vendor/popper/popper.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+
+</body>
+</html>

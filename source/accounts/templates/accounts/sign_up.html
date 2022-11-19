@@ -1,0 +1,29 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block content %}
+
+    <h4>{% trans 'Create an account' %}</h4>
+
+    {% if view.is_signup_closed %}
+
+        <div class="alert alert-warning">
+            {% trans 'The sign up is closed' %}
+        </div>
+
+    {% else %}
+
+        <form method="post">
+
+            {% csrf_token %}
+            {% bootstrap_form form %}
+
+            <button class="btn btn-success">{% trans 'Create' %}</button>
+
+        </form>
+
+    {% endif %}
+
+{% endblock %}

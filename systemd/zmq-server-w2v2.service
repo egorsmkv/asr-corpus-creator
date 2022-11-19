@@ -1,0 +1,20 @@
+[Unit]
+Description=ZeroMQ server: wav2vec2
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/asr-corpus-creator
+User=root
+Group=root
+ExecStart=/home/yehor/.local/share/virtualenvs/asr-corpus-creator-ZmBMOmnD/bin/python zmq_server_w2v2.py
+
+# Give a reasonable amount of time for the server to start up/shut down
+TimeoutSec=300
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

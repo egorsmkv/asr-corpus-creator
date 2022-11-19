@@ -1,0 +1,21 @@
+[Unit]
+Description=ASR Corpus Creator: celery worker
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/asr-corpus-creator/source
+User=root
+Group=root
+Environment=IS_PRODUCTION=true
+ExecStart=/root/.local/share/virtualenvs/asr-corpus-creator-uTRx6yqj/bin/celery -A app worker -l INFO --concurrency 1
+
+# Give a reasonable amount of time for the server to start up/shut down
+TimeoutSec=300
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

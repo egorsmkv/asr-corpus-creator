@@ -1,0 +1,44 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load i18n %}
+
+{% block content %}
+
+    {% if request.user.is_authenticated %}
+
+        {% trans 'Your username is' %} <b>{{ request.user.username }}</b>.
+
+        <br>
+        <br>
+
+        System load: {{ sysload }} <br>
+        AVG load: {{ avgload }}
+
+        <br>
+        <br>
+
+        <form action="/corpus/search-utterances">
+            <input type="text" class="form-control" name="collection_key" placeholder="Type a collection key">
+            <br>
+            <button class="btn btn-success">Search</button>
+        </form>
+
+        <br>
+
+        <h5>Last queries</h5>
+
+        <ul>
+            {% for query in history_queries %}
+            <li>
+                <a href="/corpus/search-utterances/?collection_key={{ query.collection_key }}">{{ query.collection_key }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+
+        {% trans 'You are a guest.' %}
+
+    {% endif %}
+
+{% endblock %}

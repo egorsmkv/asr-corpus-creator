@@ -1,0 +1,21 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block content %}
+
+    <h4>{% trans 'Send a YouTube link' %}</h4>
+
+    <form action="{% url 'corpus:send_link' %}" method="post">
+
+        {% csrf_token %}
+
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+
+    </form>
+
+{% endblock %}
