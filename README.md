@@ -1,6 +1,6 @@
 # ASR Corpus Creator
 
-<a href="src/branch/master/screenshots/screen1.jpg"><img src="./screenshots/screen1.jpg" width="600"></a>
+<a href="https://raw.githubusercontent.com/egorsmkv/asr-corpus-creator/main/screenshots/screen1.jpg"><img src="./screenshots/screen1.jpg" width="600"></a>
 
 ## Overview
 
