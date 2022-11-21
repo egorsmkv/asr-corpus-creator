@@ -31,17 +31,30 @@ git clone https://github.com/egorsmkv/asr-corpus-creator
 cd asr-corpus-creator
 ```
 
-### Install dependencies & activate virtual environment
+### Installation
+
+#### On MacOS
+
+Install `grpcio` like the following:
+
+```bash
+pip install https://github.com/pietrodn/grpcio-mac-arm-build/releases/download/1.50.0/grpcio-1.50.0-cp310-cp310-macosx_11_0_arm64.whl
+```
+
+#### Install dependencies & activate virtual environment
 
 ```bash
 # install pipenv if you do not use it already
 pip install pipenv
 
+# activate virtual environment
+pipenv shell
+
 # install dependencies
 pipenv install
 
-# activate virtual environment
-pipenv shell
+# or (to see the installation process)
+pip install Django==2.2.28 django-bootstrap4==1.1.1 django-bootstrap-pagination==1.7.1 celery==5.2.7 redis==4.3.3 librosa==0.9.1 torch==1.13.0 torchaudio==0.13.0 pyzmq==23.1.0 transformers==4.20.1 loguru==0.6.0 psutil==5.9.1 pyctcdecode==0.3.0 Cython==0.29.32 'nemo-toolkit[asr]==1.12.0'
 ```
 
 ### Apply migrations
