@@ -102,7 +102,7 @@ You can set a higher value to the `concurrency` argument if you need the system 
 
 ### ZeroMQ server
 
-Choose one server from the below two.
+Choose one server.
 
 #### Whisper
 
