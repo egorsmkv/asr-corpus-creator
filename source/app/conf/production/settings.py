@@ -1,6 +1,6 @@
 import os
 from os.path import dirname
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = dirname(dirname(dirname(dirname(os.path.abspath(__file__)))))
 CONTENT_DIR = os.path.join(BASE_DIR, 'content')
@@ -24,7 +24,6 @@ INSTALLED_APPS = [
 
     # Vendor apps
     'bootstrap4',
-    'bootstrap_pagination',
 
     # Application apps
     'main',
@@ -148,3 +147,5 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 IS_SIGN_UP_CLOSED = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

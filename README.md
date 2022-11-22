@@ -21,7 +21,9 @@ This app is intended to automatically create a corpus for ASR systems using pseu
 - CMake
 - Protobuf compiler
 - Docker
+- wget
 - youtube-dl
+- ffmpeg
 - Python >= 3.6
 
 ### Clone the project
@@ -54,7 +56,9 @@ pipenv shell
 pipenv install
 
 # or (to see the installation process)
-pip install Django==2.2.28 django-bootstrap4==1.1.1 django-bootstrap-pagination==1.7.1 celery==5.2.7 redis==4.3.3 librosa==0.9.1 torch==1.13.0 torchaudio==0.13.0 pyzmq==23.1.0 transformers==4.20.1 loguru==0.6.0 psutil==5.9.1 pyctcdecode==0.3.0 Cython==0.29.32 'nemo-toolkit[asr]==1.12.0'
+pip install Cython==0.29.32
+
+pip install Django==4.1.3 django-bootstrap4==22.2 celery==5.2.7 redis==4.3.3 librosa==0.9.1 torch==1.13.0 torchaudio==0.13.0 pyzmq==23.1.0 transformers==4.20.1 loguru==0.6.0 psutil==5.9.1 pyctcdecode==0.3.0 'nemo-toolkit[asr]==1.12.0'
 ```
 
 ### Apply migrations
@@ -119,7 +123,7 @@ Download `unigrams.txt` and `lm.binary` files.
 Then, run as:
 
 ```bash
-USE_LM=yes LM_UNIGRAMS_FILE=unigrams.txt LM_FILE=lm.binary python zmq_server_nemo.py
+USE_LM=yes LM_UNIGRAMS_FILE=unigrams.txt LM_FILE=lm.binary NEMO_MODEL=theodotus/stt_uk_squeezeformer_ctc_ml python zmq_server_nemo.py
 ```
 
 ### Export the data

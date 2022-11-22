@@ -1,6 +1,6 @@
 {% extends 'layouts/default/page.html' %}
 
-{% load bootstrap_pagination %}
+{% load bootstrap4 %}
 
 {% block content %}
 
@@ -49,7 +49,7 @@
 
     {% endfor %}
 
-    {% bootstrap_paginate utterances size="small" range=5 %}
+    {% bootstrap_pagination utterances size="small" extra=request.GET.urlencode %}
 
     {% endif %}
 
