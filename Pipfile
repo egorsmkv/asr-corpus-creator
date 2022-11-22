@@ -19,3 +19,4 @@ psutil = "==5.9.1"
 pyctcdecode = "==0.3.0"
 Cython = "==0.29.32"
 nemo-toolkit = {extras = ["asr"], version = "==1.12.0"}
+whisper = {git = "https://github.com/openai/whisper.git"}

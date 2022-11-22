@@ -58,7 +58,7 @@ pipenv install
 # or (to see the installation process)
 pip install Cython==0.29.32
 
-pip install Django==4.1.3 django-bootstrap4==22.2 celery==5.2.7 redis==4.3.3 librosa==0.9.1 torch==1.13.0 torchaudio==0.13.0 pyzmq==23.1.0 transformers==4.20.1 loguru==0.6.0 psutil==5.9.1 pyctcdecode==0.3.0 'nemo-toolkit[asr]==1.12.0'
+pip install Django==4.1.3 django-bootstrap4==22.2 celery==5.2.7 redis==4.3.3 librosa==0.9.1 torch==1.13.0 torchaudio==0.13.0 pyzmq==23.1.0 transformers==4.20.1 loguru==0.6.0 psutil==5.9.1 pyctcdecode==0.3.0 'nemo-toolkit[asr]==1.12.0' git+https://github.com/openai/whisper.git
 ```
 
 ### Apply migrations
@@ -95,7 +95,7 @@ Run the worker:
 
 ```bash
 cd source
-WGET_PATH=/opt/homebrew/bin/wget YOUTUBE_DL=/opt/homebrew/bin/youtube-dl FFMPEG_PATH=/opt/homebrew/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
+WGET_PATH=/opt/homebrew/bin/wget YOUTUBE_DL=/opt/homebrew/bin/youtube-dl FFMPEG_PATH=/Users/yehorsmoliakov/opt/miniconda3/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
 ```
 
 You can set a higher value to the `concurrency` argument if you need the system to be more performant.
@@ -103,6 +103,12 @@ You can set a higher value to the `concurrency` argument if you need the system 
 ### ZeroMQ server
 
 Choose one server from the below two.
+
+#### Whisper
+
+```bash
+WHISPER_MODEL=base python zmq_server_whisper.py
+```
 
 #### wav2vec2
 
