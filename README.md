@@ -4,7 +4,7 @@
 
 ## Overview
 
-This app is intended to automatically create a corpus for ASR systems using pseudo-labeling.
+This app is intended to automatically create a corpus for ASR systems using [pseudo-labeling][1].
 
 ## Features
 
@@ -139,3 +139,5 @@ FILES_DIR=/Users/yehorsmoliakov/Work/asr-corpus-creator/source/content/media/aud
 ```
 
 - **test_it2** is the collection_key argument.
+
+[1]: https://ai.facebook.com/blog/pseudo-labeling-speech-recognition-using-multilingual-unlabeled-data/
