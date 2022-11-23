@@ -43,7 +43,7 @@ Install `grpcio` like the following:
 pip install https://github.com/pietrodn/grpcio-mac-arm-build/releases/download/1.50.0/grpcio-1.50.0-cp310-cp310-macosx_11_0_arm64.whl
 ```
 
-NOTE: Look https://github.com/pietrodn/grpcio-mac-arm-build repository's releases to see different wheels for your Python version.
+NOTE: Visit https://github.com/pietrodn/grpcio-mac-arm-build repository's releases to see different wheels for your Python version.
 
 #### Install dependencies & activate virtual environment
 
