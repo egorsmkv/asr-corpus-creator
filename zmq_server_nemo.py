@@ -24,7 +24,7 @@ socket = context.socket(zmq.REP)
 socket.bind("tcp://0.0.0.0:5555")
 
 # Load the model
-NEMO_MODEL = os.getenv('NEMO_MODEL', default='NeonBohdan/stt_uk_citrinet_512_gamma_0_25')
+NEMO_MODEL = os.getenv('NEMO_MODEL', default='theodotus/stt_uk_squeezeformer_ctc_ml')
 USE_LM = os.getenv('USE_LM', default='no') == 'yes'
 LM_UNIGRAMS_FILE = os.getenv('LM_UNIGRAMS_FILE', default='')
 LM_FILE = os.getenv('LM_FILE', default='')
