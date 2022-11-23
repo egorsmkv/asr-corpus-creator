@@ -43,6 +43,8 @@ Install `grpcio` like the following:
 pip install https://github.com/pietrodn/grpcio-mac-arm-build/releases/download/1.50.0/grpcio-1.50.0-cp310-cp310-macosx_11_0_arm64.whl
 ```
 
+NOTE: Look https://github.com/pietrodn/grpcio-mac-arm-build repository's releases to see different wheels for your Python version.
+
 #### Install dependencies & activate virtual environment
 
 ```bash
@@ -52,12 +54,13 @@ pip install pipenv
 # activate virtual environment
 pipenv shell
 
+# install Cython first
+pip install Cython==0.29.32
+
 # install dependencies
 pipenv install
 
-# or (to see the installation process)
-pip install Cython==0.29.32
-
+# or install dependencies with ability to see the installation process
 pip install Django==4.1.3 django-bootstrap4==22.2 celery==5.2.7 redis==4.3.3 librosa==0.9.1 torch==1.13.0 torchaudio==0.13.0 pyzmq==23.1.0 transformers==4.20.1 loguru==0.6.0 psutil==5.9.1 pyctcdecode==0.3.0 'nemo-toolkit[asr]==1.12.0' git+https://github.com/openai/whisper.git
 ```
 
