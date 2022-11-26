@@ -22,6 +22,8 @@ socket.bind("tcp://0.0.0.0:5555")
 
 # Load the model
 WHISPER_MODEL = os.getenv('WHISPER_MODEL', default='base')
+WHISPER_LANG = os.getenv('WHISPER_LANG', default='')
+WHISPER_USE_FP16 = os.getenv('WHISPER_USE_FP16', default='no') == 'yes'
 
 logger.info('Loading the model: Whisper')
 ts = time.time()
@@ -49,8 +51,19 @@ while True:
             filename = f.name
 
             # Inference
-            result = model.transcribe(filename)
-            text = result["text"]
+            audio = whisper.load_audio(filename)
+            audio = whisper.pad_or_trim(audio)
+
+            mel = whisper.log_mel_spectrogram(audio).to(model.device)
+
+            if WHISPER_LANG:
+                options = whisper.DecodingOptions(language=WHISPER_LANG, fp16=WHISPER_USE_FP16)
+            else:
+                options = whisper.DecodingOptions(fp16=WHISPER_USE_FP16)
+
+            result = whisper.decode(model, mel, options)
+
+            text = result.text
             text = text.strip()
 
         logger.info(f"Recognized text: {text}")

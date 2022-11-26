@@ -110,7 +110,7 @@ Choose one server.
 #### Whisper
 
 ```bash
-WHISPER_MODEL=base python zmq_server_whisper.py
+WHISPER_LANG=en WHISPER_MODEL=base python zmq_server_whisper.py
 ```
 
 #### wav2vec2
