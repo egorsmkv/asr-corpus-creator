@@ -10,6 +10,10 @@ This app is intended to automatically create a corpus for ASR systems using [pse
 
 - Send links of YouTube content
 - Send direct links to video/audio from remote servers
+- Collect metadata
+  - Loudness
+  - Label language detection
+  - Audio language detection
 - Export labeled data using a console
 - `whisper`, `wav2vec2`, or `NeMo` as an ASR backend
 
