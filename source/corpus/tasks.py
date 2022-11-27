@@ -6,6 +6,7 @@ import torch
 from os.path import exists
 from urllib.parse import urlparse
 
+import whisper
 import zmq
 import soundfile as sf
 import pyloudnorm as pyln
@@ -16,6 +17,8 @@ from lingua import Language, LanguageDetectorBuilder
 from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance
 from .utils import get_speech_timestamps, read_audio, save_audio, init_jit_model, wada_snr
 
+DETECT_AUDIO_LANG = os.getenv('DETECT_AUDIO_LANG', default='no') == 'yes'
+WHISPER_MODEL = os.getenv('WHISPER_MODEL', default='base')
 
 WGET_PATH = os.getenv('WGET_PATH', default='/usr/bin/wget')
 YOUTUBE_DL = os.getenv('YOUTUBE_DL', default='/usr/local/bin/youtube-dl')
@@ -33,6 +36,10 @@ model = init_jit_model(f'{settings.MEDIA_ROOT}/silero_vad.jit')
 
 # Init language detector
 lang_detector = LanguageDetectorBuilder.from_languages(*Language.all()).build()
+
+# Init audio language detector (using Whisper model)
+if DETECT_AUDIO_LANG:
+    whisper_model = whisper.load_model(WHISPER_MODEL)
 
 
 @shared_task
@@ -290,6 +297,7 @@ def recognize_chunks(audio_file_id):
         snr = wada_snr(wav)
 
         label_lang = '--'
+        audio_lang = '--'
         loudness = 0
 
         # Detect label's language
@@ -302,11 +310,23 @@ def recognize_chunks(audio_file_id):
         meter = pyln.Meter(rate) # create BS.1770 meter
         loudness = meter.integrated_loudness(file_data)
 
+        # Detect audio language
+        if DETECT_AUDIO_LANG:
+            chunk_audio = whisper.load_audio(chunk.filename)
+            chunk_audio = whisper.pad_or_trim(chunk_audio)
+
+            mel = whisper.log_mel_spectrogram(chunk_audio).to(whisper_model.device)
+            _, probs = whisper_model.detect_language(mel)
+            audio_lang = max(probs, key=probs.get)
+            if isinstance(audio_lang, str):
+                audio_lang = audio_lang.upper()
+
         # Save the utterance and delete the chunk row (in database)
         utt = Utterance()
         utt.collection_key = audio.collection_key
         utt.label = text
         utt.label_lang = label_lang
+        utt.audio_lang = audio_lang
         utt.loudness = loudness
         utt.filename = chunk.filename
         utt.length = chunk.length

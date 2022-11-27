@@ -13,7 +13,7 @@
     Sort:
     <ul>
         <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=snr">SNR</a> </li>
-        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=length">Length</a> </li>
+        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=length">Duration</a> </li>
     </ul>
 
     <div class="card mb-2">
@@ -41,13 +41,15 @@
             <code>{{ utterance.label }}</code>
             <br>
             <br>
-            Length: <b>{{ utterance.length }}</b> sec.
+            Duration: <b>{{ utterance.length }}</b> sec.
             <br>
             SNR: <b>{{ utterance.get_snr_formatted }}</b>
             <br>
             Loudness: <b>{{ utterance.get_loudness_formatted }}</b>
             <br>
             Label lang: <b>{{ utterance.label_lang }}</b>
+            <br>
+            Audio lang: <b>{{ utterance.audio_lang }}</b>
         </div>
     </div>
 

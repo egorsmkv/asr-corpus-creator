@@ -101,6 +101,13 @@ cd source
 WGET_PATH=/opt/homebrew/bin/wget YOUTUBE_DL=/opt/homebrew/bin/youtube-dl FFMPEG_PATH=/Users/yehorsmoliakov/opt/miniconda3/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
 ```
 
+Run the worker with audio language detection:
+
+```bash
+cd source
+DETECT_AUDIO_LANG=yes WGET_PATH=/opt/homebrew/bin/wget YOUTUBE_DL=/opt/homebrew/bin/youtube-dl FFMPEG_PATH=/Users/yehorsmoliakov/opt/miniconda3/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
+```
+
 You can set a higher value to the `concurrency` argument if you need the system to be more performant.
 
 ### ZeroMQ server

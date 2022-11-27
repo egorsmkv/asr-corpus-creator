@@ -6,6 +6,8 @@ __pycache__/
 source/content/media/
 source/content/static/
 
+source/save/
+
 env/
 tmp/
 
