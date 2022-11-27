@@ -67,6 +67,8 @@ class Utterance(models.Model):
     length = models.FloatField(default=0)
     lang = models.CharField(max_length=2)
     snr = models.FloatField(default=0)
+    loudness = models.FloatField(default=0)
+    label_lang = models.CharField(max_length=2, default='--')
 
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -80,3 +82,6 @@ class Utterance(models.Model):
 
     def get_snr_formatted(self):
         return round(self.snr, 4)
+
+    def get_loudness_formatted(self):
+        return round(self.loudness, 4)

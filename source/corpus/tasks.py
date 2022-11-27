@@ -7,8 +7,11 @@ from os.path import exists
 from urllib.parse import urlparse
 
 import zmq
+import soundfile as sf
+import pyloudnorm as pyln
 from celery import shared_task
 from django.conf import settings
+from lingua import Language, LanguageDetectorBuilder
 
 from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance
 from .utils import get_speech_timestamps, read_audio, save_audio, init_jit_model, wada_snr
@@ -27,6 +30,9 @@ torch.set_num_threads(1)
 
 # Init the Silero VAD model
 model = init_jit_model(f'{settings.MEDIA_ROOT}/silero_vad.jit')
+
+# Init language detector
+lang_detector = LanguageDetectorBuilder.from_languages(*Language.all()).build()
 
 
 @shared_task
@@ -283,10 +289,25 @@ def recognize_chunks(audio_file_id):
         wav, _ = librosa.load(chunk.filename)
         snr = wada_snr(wav)
 
+        label_lang = '--'
+        loudness = 0
+
+        # Detect label's language
+        guess_lang = lang_detector.detect_language_of(text)
+        if guess_lang:
+            label_lang = guess_lang.iso_code_639_1.name
+        
+        # Detect loudness
+        file_data, rate = sf.read(chunk.filename)
+        meter = pyln.Meter(rate) # create BS.1770 meter
+        loudness = meter.integrated_loudness(file_data)
+
         # Save the utterance and delete the chunk row (in database)
         utt = Utterance()
         utt.collection_key = audio.collection_key
         utt.label = text
+        utt.label_lang = label_lang
+        utt.loudness = loudness
         utt.filename = chunk.filename
         utt.length = chunk.length
         utt.lang = audio.lang
