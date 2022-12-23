@@ -19,6 +19,16 @@ class YoutubeLink(models.Model):
         return self.link
 
 
+class YoutubeChannelLink(models.Model):
+    channel_url = models.CharField(max_length=500)
+    collection_key = models.CharField(max_length=50, default='-')
+    is_exported = models.BooleanField(default=False)
+    lang = models.CharField(max_length=2, default='-')
+
+    def __str__(self):
+        return self.link
+
+
 class LocalFolder(models.Model):
     path = models.CharField(max_length=500)
     collection_key = models.CharField(max_length=50, default='-')

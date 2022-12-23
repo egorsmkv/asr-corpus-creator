@@ -41,6 +41,7 @@
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">{% trans 'Add data' %}</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{% url 'corpus:send_link' %}">{% trans 'Send a YouTube link' %}</a>
+                        <a class="dropdown-item" href="{% url 'corpus:send_youtube_channel' %}">{% trans 'Send a YouTube channel link' %}</a>
                         <a class="dropdown-item" href="{% url 'corpus:send_video_link' %}">{% trans 'Send a video link' %}</a>
                         <a class="dropdown-item" href="{% url 'corpus:send_audio_link' %}">{% trans 'Send an audio link' %}</a>
                         <a class="dropdown-item" href="{% url 'corpus:send_local_folder' %}">{% trans 'Send a local folder' %}</a>

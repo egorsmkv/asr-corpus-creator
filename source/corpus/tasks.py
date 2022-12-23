@@ -17,7 +17,7 @@ from django.conf import settings
 from pyannote.audio import Pipeline
 from lingua import Language, LanguageDetectorBuilder
 
-from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance, LocalFolder
+from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance, LocalFolder, YoutubeChannelLink
 from .utils import wada_snr
 from .srmrpy import srmr
 
@@ -216,6 +216,58 @@ def download_youtube_audio(url, row_id):
 
     # Now, the filename must be separated into chunks
     split_into_chunks.delay(af.id)
+
+
+@shared_task
+def download_youtube_channel(row_id):
+    row = YoutubeChannelLink.objects.filter(id=row_id).get()
+    print(f'Processing YoutubeChannelLink ID: {row.id}')
+
+    if row.is_exported:
+        print('The row is already exported')
+        return
+
+    # Create audios folder
+    path = f'{settings.MEDIA_ROOT}/audios'
+    if not exists(path):
+        os.makedirs(path)
+    
+    # Create a folder for the channel
+    channel_path = path + f'/channel_{row_id}'
+    if not exists(channel_path):
+        os.makedirs(channel_path)
+
+    # Use yt-dlp if youtube-dl is not set
+    if len(YT_DLP) > 0:
+        cmd = [YT_DLP, '-f', 'm4a', '--audio-quality', '0', '--download-archive', f'/tmp/{row_id}_videos.txt', '-o', f'{channel_path}/%(id)s.%(ext)s', row.channel_url]
+    else:
+        cmd = [YOUTUBE_DL, '-f', 'm4a', '--audio-quality', '0', '--download-archive', f'/tmp/{row_id}_videos.txt', '-o', f'{channel_path}/%(id)s.%(ext)s', row.channel_url]
+    output = subprocess.Popen(cmd)
+    output.communicate()
+
+    # Convert audios to the WAV format
+    for filename in glob(channel_path + '/*.m4a'):
+        save_as_wav = filename.replace('.m4a', '.wav')
+        cmd = [FFMPEG_PATH, '-i', filename, '-ar', str(SAMPLE_RATE), '-ac', '1', '-acodec', 'pcm_s16le', save_as_wav]
+        output = subprocess.Popen(cmd)
+        output.communicate()
+
+        # Remove M4A file
+        if exists(filename):
+            os.remove(filename)
+
+    # Send the folder with WAV files to the processing
+    lf = LocalFolder()
+    lf.path = channel_path
+    lf.collection_key = row.collection_key
+    lf.lang = row.lang
+    lf.save()
+
+    process_local_folder.delay(lf.id)
+
+    # Set the row as exported
+    row.is_exported = True
+    row.save()
 
 
 @shared_task

@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import (
-    SendLinkView, SendAudioLinkView, SendVideoLinkView, SearchUtterancesView, SendLocalFolderView,
+    SendLinkView, SendYouTubeChannelView, SendAudioLinkView, 
+    SendVideoLinkView, SearchUtterancesView, SendLocalFolderView,
     send_video_api,
 )
 
@@ -9,6 +10,7 @@ app_name = 'corpus'
 
 urlpatterns = [
     path('send-link/', SendLinkView.as_view(), name='send_link'),
+    path('send-youtube-channel/', SendYouTubeChannelView.as_view(), name='send_youtube_channel'),
     path('send-video-link/', SendVideoLinkView.as_view(), name='send_video_link'),
     path('send-audio-link/', SendAudioLinkView.as_view(), name='send_audio_link'),
     path('send-local-folder/', SendLocalFolderView.as_view(), name='send_local_folder'),

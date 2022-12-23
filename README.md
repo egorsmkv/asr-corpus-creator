@@ -28,7 +28,7 @@ This app is intended to automatically create a corpus for ASR systems using [pse
 - Protobuf compiler
 - Docker
 - wget
-- youtube-dl
+- youtube-dl or yt-dlp
 - ffmpeg
 - Python >= 3.6
 
