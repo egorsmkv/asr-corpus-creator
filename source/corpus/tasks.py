@@ -4,6 +4,7 @@ import subprocess
 import librosa
 import torch
 from os.path import exists
+from glob import glob
 from urllib.parse import urlparse
 
 import whisper
@@ -14,7 +15,7 @@ from celery import shared_task
 from django.conf import settings
 from lingua import Language, LanguageDetectorBuilder
 
-from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance
+from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance, LocalFolder
 from .utils import get_speech_timestamps, read_audio, save_audio, init_jit_model, wada_snr
 
 DETECT_AUDIO_LANG = os.getenv('DETECT_AUDIO_LANG', default='no') == 'yes'
@@ -163,7 +164,7 @@ def download_youtube_audio(url, row_id):
     if row.is_exported:
         print('The row is already exported')
         return
-    
+
     # Create audios folder
     if not exists(f'{settings.MEDIA_ROOT}/audios'):
         os.makedirs(f'{settings.MEDIA_ROOT}/audios')
@@ -203,6 +204,42 @@ def download_youtube_audio(url, row_id):
 
     # Now, the filename must be separated into chunks
     split_into_chunks.delay(af.id)
+
+
+@shared_task
+def process_local_folder(row_id):
+    row = LocalFolder.objects.filter(id=row_id).get()
+    print(f'Processing LocalFolder ID: {row.id}')
+
+    if row.is_exported:
+        print('The row is already exported')
+        return
+
+    # Create audios folder
+    if not exists(f'{settings.MEDIA_ROOT}/audios'):
+        os.makedirs(f'{settings.MEDIA_ROOT}/audios')
+
+    for filename in glob(row.path + '/*.wav'):
+        print(f'Sending a file: {filename}')
+
+        # Determine the length of the file
+        length = librosa.get_duration(filename=filename)
+
+        # Create a row of audio files
+        af = AudioFile()
+        af.collection_key = row.collection_key
+        af.link = '-'
+        af.lang = row.lang
+        af.filename = filename
+        af.length = length
+        af.save()
+
+        # Now, the filename must be separated into chunks
+        split_into_chunks.delay(af.id)
+
+    # Set the row as exported
+    row.is_exported = True
+    row.save()
 
 
 @shared_task
@@ -304,7 +341,7 @@ def recognize_chunks(audio_file_id):
         guess_lang = lang_detector.detect_language_of(text)
         if guess_lang:
             label_lang = guess_lang.iso_code_639_1.name
-        
+
         # Detect loudness
         file_data, rate = sf.read(chunk.filename)
         meter = pyln.Meter(rate) # create BS.1770 meter

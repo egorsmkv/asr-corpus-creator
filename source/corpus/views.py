@@ -6,9 +6,9 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 
-from .tasks import download_youtube_audio, download_audio, download_video
-from .forms import SendLinkForm, SendAudioLinkForm, SendVideoLinkForm
-from .models import YoutubeLink, Utterance, AudioLink, VideoFile, SearchHistory
+from .tasks import download_youtube_audio, download_audio, download_video, process_local_folder
+from .forms import SendLinkForm, SendAudioLinkForm, SendVideoLinkForm, SendLocalFolderForm
+from .models import YoutubeLink, Utterance, AudioLink, VideoFile, SearchHistory, LocalFolder
 
 
 class SendLinkView(LoginRequiredMixin, FormView):
@@ -34,6 +34,31 @@ class SendLinkView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Link has been sent')
 
         return redirect('/corpus/send-link/')
+
+
+class SendLocalFolderView(LoginRequiredMixin, FormView):
+    template_name = 'corpus/send_local_folder.html'
+
+    @staticmethod
+    def get_form_class(**kwargs):
+        return SendLocalFolderForm
+
+    def form_valid(self, form):
+        path = form.cleaned_data['path']
+        collection_key = form.cleaned_data['collection_key']
+        lang = form.cleaned_data['lang']
+
+        lf = LocalFolder()
+        lf.path = path
+        lf.collection_key = collection_key
+        lf.lang = lang
+        lf.save()
+
+        process_local_folder.delay(lf.id)
+
+        messages.success(self.request, 'Folder has been sent')
+
+        return redirect('/corpus/send-local-folder/')
 
 
 class SendAudioLinkView(LoginRequiredMixin, FormView):

@@ -1,0 +1,25 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block content %}
+
+    <h4>{% trans 'Send a local folder' %}</h4>
+
+    <div class="alert alert-info">
+        Files must be in <b>WAV format</b> with <b>16 kHz</b>.
+    </div>
+
+    <form action="{% url 'corpus:send_local_folder' %}" method="post">
+
+        {% csrf_token %}
+
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+
+    </form>
+
+{% endblock %}

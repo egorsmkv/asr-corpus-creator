@@ -1,3 +1,5 @@
+from os.path import exists
+
 from django import forms
 from django.forms import ValidationError
 
@@ -42,3 +44,17 @@ class SendVideoLinkForm(forms.Form):
             raise ValidationError('The link must start with http:// or https:/')
 
         return link
+
+
+class SendLocalFolderForm(forms.Form):
+    path = forms.CharField(label='Path')
+    collection_key = forms.CharField(label='Collection Key')
+    lang = forms.CharField(label='Lang', max_length=2)
+
+    def clean_path(self):
+        path = self.cleaned_data['path']
+
+        if not exists(path):
+            raise ValidationError('The provided folder does not exist')
+
+        return path
