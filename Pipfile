@@ -22,3 +22,4 @@ nemo-toolkit = {extras = ["asr"], version = "==1.12.0"}
 whisper = {git = "https://github.com/openai/whisper.git"}
 lingua-language-detector = "==1.1.3"
 pyloudnorm = {git = "https://github.com/csteinmetz1/pyloudnorm.git"}
+Gammatone = {git = "https://github.com/detly/gammatone.git"}

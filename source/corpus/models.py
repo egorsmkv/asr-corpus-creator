@@ -78,6 +78,7 @@ class Utterance(models.Model):
     lang = models.CharField(max_length=2)
     snr = models.FloatField(default=0)
     loudness = models.FloatField(default=0)
+    srmr_ratio = models.FloatField(default=0)
     label_lang = models.CharField(max_length=2, default='--')
     audio_lang = models.CharField(max_length=2, default='--')
 
@@ -96,3 +97,6 @@ class Utterance(models.Model):
 
     def get_loudness_formatted(self):
         return round(self.loudness, 4)
+
+    def get_srmr_formatted(self):
+        return round(self.srmr_ratio, 4)

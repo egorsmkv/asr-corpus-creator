@@ -17,6 +17,7 @@ from lingua import Language, LanguageDetectorBuilder
 
 from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance, LocalFolder
 from .utils import get_speech_timestamps, read_audio, save_audio, init_jit_model, wada_snr
+from .srmrpy import srmr
 
 DETECT_AUDIO_LANG = os.getenv('DETECT_AUDIO_LANG', default='no') == 'yes'
 WHISPER_MODEL = os.getenv('WHISPER_MODEL', default='base')
@@ -266,7 +267,7 @@ def split_into_chunks(audio_file_id):
         chunk = wav[c['start']: c['end']]
         original_filename = audio.filename.split('/')[-1].replace('.wav', '')
         new_folder = f'{settings.MEDIA_ROOT}/audios/chunks/{original_filename}'
-        
+
         if not exists(new_folder):
             os.makedirs(new_folder)
 
@@ -330,7 +331,7 @@ def recognize_chunks(audio_file_id):
             continue
 
         # Determine the SNR value
-        wav, _ = librosa.load(chunk.filename)
+        wav, sr = librosa.load(chunk.filename)
         snr = wada_snr(wav)
 
         label_lang = '--'
@@ -346,6 +347,9 @@ def recognize_chunks(audio_file_id):
         file_data, rate = sf.read(chunk.filename)
         meter = pyln.Meter(rate) # create BS.1770 meter
         loudness = meter.integrated_loudness(file_data)
+
+        # Detect SRMR ratio
+        srmr_ratio, _ = srmr(wav, sr)
 
         # Detect audio language
         if DETECT_AUDIO_LANG:
@@ -365,6 +369,7 @@ def recognize_chunks(audio_file_id):
         utt.label_lang = label_lang
         utt.audio_lang = audio_lang
         utt.loudness = loudness
+        utt.srmr_ratio = srmr_ratio
         utt.filename = chunk.filename
         utt.length = chunk.length
         utt.lang = audio.lang
