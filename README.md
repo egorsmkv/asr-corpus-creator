@@ -100,11 +100,18 @@ Run Redis broker via docker:
 docker run -d -p 6390:6379 redis
 ```
 
-Run the worker:
+Run the worker (with `youtube-dl`):
 
 ```bash
 cd source
 HF_TOKEN=xxxx WGET_PATH=/opt/homebrew/bin/wget YOUTUBE_DL=/opt/homebrew/bin/youtube-dl FFMPEG_PATH=/Users/yehorsmoliakov/opt/miniconda3/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
+```
+
+Run the worker (with `yt-dlp`):
+
+```bash
+cd source
+HF_TOKEN=xxxx WGET_PATH=/opt/homebrew/bin/wget YT_DLP=/opt/homebrew/bin/yt-dlp FFMPEG_PATH=/Users/yehorsmoliakov/opt/miniconda3/bin/ffmpeg celery -A app worker -l INFO --concurrency 1
 ```
 
 Run the worker with audio language detection:

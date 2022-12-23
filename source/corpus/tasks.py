@@ -25,7 +25,8 @@ DETECT_AUDIO_LANG = os.getenv('DETECT_AUDIO_LANG', default='no') == 'yes'
 WHISPER_MODEL = os.getenv('WHISPER_MODEL', default='base')
 
 WGET_PATH = os.getenv('WGET_PATH', default='/usr/bin/wget')
-YOUTUBE_DL = os.getenv('YOUTUBE_DL', default='/usr/local/bin/youtube-dl')
+YOUTUBE_DL = os.getenv('YOUTUBE_DL', default='')
+YT_DLP = os.getenv('YT_DLP', default='/usr/local/bin/yt-dlp')
 FFMPEG_PATH = os.getenv('FFMPEG_PATH', default='/usr/bin/ffmpeg')
 
 HF_TOKEN = os.getenv('HF_TOKEN', default='')
@@ -177,9 +178,15 @@ def download_youtube_audio(url, row_id):
     save_as_m4a = f'{settings.MEDIA_ROOT}/audios/{row.id}.m4a'
     save_as_wav = f'{settings.MEDIA_ROOT}/audios/{row.id}.wav'
 
-    # Download YouTube video via youtube-dl
+    # Download YouTube video via youtube-dl or yt-dlp
     if not exists(save_as_m4a):
-        output = subprocess.Popen([YOUTUBE_DL, '-x', '--audio-format', 'm4a', '--audio-quality', '0', '-o', save_as_m4a, url])
+        # Use yt-dlp if youtube-dl is not set
+        youtube_downloader_cli = ''
+        if len(YT_DLP) > 0:
+            youtube_downloader_cli = YT_DLP
+        else:
+            youtube_downloader_cli = YOUTUBE_DL
+        output = subprocess.Popen([youtube_downloader_cli, '-x', '--audio-format', 'm4a', '--audio-quality', '0', '-o', save_as_m4a, url])
         output.communicate()
 
     # Set the row as exported
