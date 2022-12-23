@@ -11,12 +11,14 @@ import whisper
 import zmq
 import soundfile as sf
 import pyloudnorm as pyln
+from pydub import AudioSegment
 from celery import shared_task
 from django.conf import settings
+from pyannote.audio import Pipeline
 from lingua import Language, LanguageDetectorBuilder
 
 from .models import YoutubeLink, AudioLink, VideoFile, AudioFile, AudioChunk, Utterance, LocalFolder
-from .utils import get_speech_timestamps, read_audio, save_audio, init_jit_model, wada_snr
+from .utils import wada_snr
 from .srmrpy import srmr
 
 DETECT_AUDIO_LANG = os.getenv('DETECT_AUDIO_LANG', default='no') == 'yes'
@@ -26,6 +28,8 @@ WGET_PATH = os.getenv('WGET_PATH', default='/usr/bin/wget')
 YOUTUBE_DL = os.getenv('YOUTUBE_DL', default='/usr/local/bin/youtube-dl')
 FFMPEG_PATH = os.getenv('FFMPEG_PATH', default='/usr/bin/ffmpeg')
 
+HF_TOKEN = os.getenv('HF_TOKEN', default='')
+
 SAMPLE_RATE = 16000
 
 W2V2_SERVER = 'tcp://localhost:5555'
@@ -33,8 +37,8 @@ W2V2_SERVER = 'tcp://localhost:5555'
 # Fix the number of threads (as it is shown in Silero demo)
 torch.set_num_threads(1)
 
-# Init the Silero VAD model
-model = init_jit_model(f'{settings.MEDIA_ROOT}/silero_vad.jit')
+# Load PyAnnote VAD model
+vad_pipeline = Pipeline.from_pretrained("pyannote/voice-activity-detection", use_auth_token=HF_TOKEN)
 
 # Init language detector
 lang_detector = LanguageDetectorBuilder.from_languages(*Language.all()).build()
@@ -252,19 +256,21 @@ def split_into_chunks(audio_file_id):
         print(f'The {audio.filename} does not exist')
         return
 
-    # Read the file and retreive speeches
-    wav = read_audio(audio.filename, sampling_rate=SAMPLE_RATE)
-    speech_timestamps = get_speech_timestamps(wav, model, sampling_rate=SAMPLE_RATE, window_size_samples=512)
+    # Get WAV
+    wav = AudioSegment.from_wav(audio.filename)
 
-    for n, c in enumerate(speech_timestamps):
+    # Detect speech segments by VAD
+    output = vad_pipeline(audio.filename)
+
+    for n, speech in enumerate(output.get_timeline().support()):
         # Start and end of speech in seconds
-        ts_start = round(c['start'] / SAMPLE_RATE, 1)
-        ts_end = round(c['end'] / SAMPLE_RATE, 1)
+        ts_start = speech.start
+        ts_end = speech.end
 
         print(f'Chunk: {ts_start} - {ts_end}')
 
         # Get the detected speech
-        chunk = wav[c['start']: c['end']]
+        chunk = wav[ts_start * 1000 : ts_end * 1000]
         original_filename = audio.filename.split('/')[-1].replace('.wav', '')
         new_folder = f'{settings.MEDIA_ROOT}/audios/chunks/{original_filename}'
 
@@ -274,7 +280,7 @@ def split_into_chunks(audio_file_id):
         # Save the chunk
         filename = f'{new_folder}/{original_filename}__chunk_{n}.wav'
         if not exists(filename):
-            save_audio(filename, chunk, SAMPLE_RATE)
+            chunk.export(filename, format="wav")
 
             # Determine the length of the file
             length = librosa.get_duration(filename=filename)
