@@ -32,6 +32,12 @@ class SendYouTubeChannelForm(forms.Form):
         return link
 
 
+class SendYouTubeChannelsForm(forms.Form):
+    channel_urls = forms.CharField(widget=forms.Textarea, label='Channel URLs')
+    collection_key = forms.CharField(label='Collection Key')
+    lang = forms.CharField(label='Lang', max_length=2)
+
+
 class SendAudioLinkForm(forms.Form):
     link = forms.CharField(label='Link')
     collection_key = forms.CharField(label='Collection Key')

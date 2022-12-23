@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 
 from .tasks import download_youtube_audio, download_audio, download_video, process_local_folder, download_youtube_channel
-from .forms import SendLinkForm, SendYouTubeChannelForm, SendAudioLinkForm, SendVideoLinkForm, SendLocalFolderForm
+from .forms import SendLinkForm, SendYouTubeChannelForm, SendYouTubeChannelsForm, SendAudioLinkForm, SendVideoLinkForm, SendLocalFolderForm
 from .models import YoutubeLink, Utterance, AudioLink, VideoFile, SearchHistory, LocalFolder, YoutubeChannelLink
 
 
@@ -59,6 +59,34 @@ class SendYouTubeChannelView(LoginRequiredMixin, FormView):
         messages.success(self.request, 'Link to the channel has been sent')
 
         return redirect('/corpus/send-youtube-channel/')
+
+
+class SendYouTubeChannelsView(LoginRequiredMixin, FormView):
+    template_name = 'corpus/send_youtube_channels.html'
+
+    @staticmethod
+    def get_form_class(**kwargs):
+        return SendYouTubeChannelsForm
+
+    def form_valid(self, form):
+        channel_urls = form.cleaned_data['channel_urls']
+        collection_key = form.cleaned_data['collection_key']
+        lang = form.cleaned_data['lang']
+
+        channels = channel_urls.split('\n')
+
+        for channel_url in channels:
+            ycl = YoutubeChannelLink()
+            ycl.channel_url = channel_url
+            ycl.collection_key = collection_key
+            ycl.lang = lang
+            ycl.save()
+
+            download_youtube_channel.delay(ycl.id)
+
+        messages.success(self.request, 'Links to the channels has been sent')
+
+        return redirect('/corpus/send-youtube-channels/')
 
 
 class SendLocalFolderView(LoginRequiredMixin, FormView):
