@@ -110,3 +110,10 @@ class Utterance(models.Model):
 
     def get_srmr_formatted(self):
         return round(self.srmr_ratio, 4)
+
+
+class Proxy(models.Model):
+    addr = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.addr

@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 
 from .tasks import download_youtube_audio, download_audio, download_video, process_local_folder, download_youtube_channel
-from .forms import SendLinkForm, SendYouTubeChannelForm, SendYouTubeChannelsForm, SendAudioLinkForm, SendVideoLinkForm, SendLocalFolderForm
-from .models import YoutubeLink, Utterance, AudioLink, VideoFile, SearchHistory, LocalFolder, YoutubeChannelLink
+from .forms import SendLinkForm, SendYouTubeChannelForm, SendYouTubeChannelsForm, SendAudioLinkForm, SendVideoLinkForm, SendLocalFolderForm, CreateProxiesForm
+from .models import YoutubeLink, Utterance, AudioLink, VideoFile, SearchHistory, LocalFolder, YoutubeChannelLink, Proxy
 
 
 class SendLinkView(LoginRequiredMixin, FormView):
@@ -234,3 +234,28 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
             utterances  = paginator.page(paginator.num_pages)
 
         return render(request, self.template_name, {'count_all': count_all, 'collection_key': collection_key, 'utterances': utterances, 'summary_time': summary_time, 'summary_time_min': summary_time_min, 'summary_time_hours': summary_time_hours})
+
+
+class ProxiesView(LoginRequiredMixin, FormView):
+    template_name = 'corpus/proxies.html'
+
+    @staticmethod
+    def get_form_class(**kwargs):
+        return CreateProxiesForm
+    
+    def get(self, request):
+        proxies = Proxy.objects.all()
+
+        return render(request, self.template_name, {'proxies': proxies, 'form': self.get_form()})
+
+    def form_valid(self, form):
+        proxies = form.cleaned_data['proxies'].split('\n')
+
+        for proxy in proxies:
+            p = Proxy()
+            p.addr = proxy
+            p.save()
+
+        messages.success(self.request, 'Proxies have been added')
+
+        return redirect('/corpus/proxies/')

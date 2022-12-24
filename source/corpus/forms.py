@@ -78,3 +78,7 @@ class SendLocalFolderForm(forms.Form):
             raise ValidationError('The provided folder does not exist')
 
         return path
+
+
+class CreateProxiesForm(forms.Form):
+    proxies = forms.CharField(widget=forms.Textarea, label='The list of proxies')

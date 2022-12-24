@@ -1,0 +1,41 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block content %}
+
+    <h4>{% trans 'Proxies' %}</h4>
+
+    <form action="{% url 'corpus:proxies' %}" method="post">
+
+        {% csrf_token %}
+
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+
+    </form>
+
+    <h3>{% trans 'Added proxies' %}</h3>
+
+    {% if not proxies %}
+
+        <div class="alert alert-info">
+            {% trans 'No proxies added' %}
+        </div>
+
+    {% else %}
+
+        {% for proxy in proxies %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    {{ proxy }}
+                </div>
+            </div>
+        {% endfor %}
+
+    {% endif %}
+
+{% endblock %}
