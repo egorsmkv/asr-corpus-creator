@@ -3,6 +3,7 @@ import os
 import subprocess
 import librosa
 import torch
+import time
 from os.path import exists
 from glob import glob
 from urllib.parse import urlparse
@@ -47,6 +48,44 @@ lang_detector = LanguageDetectorBuilder.from_languages(*Language.all()).build()
 # Init audio language detector (using Whisper model)
 if DETECT_AUDIO_LANG:
     whisper_model = whisper.load_model(WHISPER_MODEL)
+
+
+@shared_task
+def push_folder_to_processing(folder, collection_key, lang):
+    print(f'Processing the folder {folder}')
+
+    # Create audios folder
+    if not exists(f'{settings.MEDIA_ROOT}/audios'):
+        os.makedirs(f'{settings.MEDIA_ROOT}/audios')
+    
+    # Create a folder for the processing
+    ts = time.time()
+    processing_folder = f'{settings.MEDIA_ROOT}/audios/processing_{ts}'
+
+    if not exists(processing_folder):
+        os.makedirs(processing_folder)
+
+    # Get all files from the source folder
+    all_files = os.listdir(folder)
+
+    # Move files into a newly created folder
+    for filename in all_files:
+        src_path = os.path.join(folder, filename)
+        dst_path = os.path.join(processing_folder, filename)
+
+        os.rename(src_path, dst_path)
+
+    n_files = len(all_files)
+    print(f'Files are moved, number of files: {n_files}')
+
+    # Now, send the folder to the processing
+    lf = LocalFolder()
+    lf.path = processing_folder
+    lf.collection_key = collection_key
+    lf.lang = lang
+    lf.save()
+
+    process_local_folder.delay(lf.id)
 
 
 @shared_task
@@ -411,7 +450,10 @@ def recognize_chunks(audio_file_id):
         # Detect loudness
         file_data, rate = sf.read(chunk.filename)
         meter = pyln.Meter(rate) # create BS.1770 meter
-        loudness = meter.integrated_loudness(file_data)
+        try:
+            loudness = meter.integrated_loudness(file_data)
+        except ValueError: # Intercept an exception: Audio must have length greater than the block size.
+            loudness = 0
 
         # Detect SRMR ratio
         srmr_ratio, _ = srmr(wav, sr)

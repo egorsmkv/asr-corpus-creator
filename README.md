@@ -10,12 +10,14 @@ This app is intended to automatically create a corpus for ASR systems using [pse
 
 ## Features
 
-- Send links of YouTube content
+- Send links of YouTube content or even an entire channel
 - Send direct links to video/audio from remote servers
+- Send local folders
 - Collect metadata
   - Loudness
   - Label language detection
   - Audio language detection
+  - SRMR ratio (measure reverberation)
 - Export labeled data using a console
 - `whisper`, `wav2vec2`, or `NeMo` as an ASR backend
 
@@ -154,6 +156,22 @@ Then, run as:
 ```bash
 USE_LM=yes LM_UNIGRAMS_FILE=unigrams.txt LM_FILE=lm.binary NEMO_MODEL=theodotus/stt_uk_squeezeformer_ctc_ml python zmq_server_nemo.py
 ```
+
+### Push new files from a folder to the processing
+
+Structure of the command:
+
+```bash
+python source/manage.py push_to_processing <collection_key> <lang> <folder_path>
+```
+
+Example:
+
+```bash
+python source/manage.py push_to_processing cv10 uk /Users/yehorsmoliakov/Downloads/test-folder
+```
+
+You can configure a CRON command to push new files with the above command.
 
 ### Export the data
 
