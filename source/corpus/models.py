@@ -117,3 +117,14 @@ class Proxy(models.Model):
 
     def __str__(self):
         return self.addr
+
+
+
+def get_proxies():
+    items = [['-', '-']]
+
+    for proxy in Proxy.objects.all():
+        items.append([proxy.addr, proxy.addr])
+
+    return items
+

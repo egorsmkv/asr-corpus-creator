@@ -22,6 +22,7 @@ class SendLinkView(LoginRequiredMixin, FormView):
         link = form.cleaned_data['link']
         collection_key = form.cleaned_data['collection_key']
         lang = form.cleaned_data['lang']
+        proxy = form.cleaned_data['proxy']
 
         yt = YoutubeLink()
         yt.link = link
@@ -29,7 +30,7 @@ class SendLinkView(LoginRequiredMixin, FormView):
         yt.lang = lang
         yt.save()
 
-        download_youtube_audio.delay(link, yt.id)
+        download_youtube_audio.delay(link, yt.id, proxy)
 
         messages.success(self.request, 'Link has been sent')
 
@@ -47,6 +48,7 @@ class SendYouTubeChannelView(LoginRequiredMixin, FormView):
         channel_url = form.cleaned_data['channel_url']
         collection_key = form.cleaned_data['collection_key']
         lang = form.cleaned_data['lang']
+        proxy = form.cleaned_data['proxy']
 
         ycl = YoutubeChannelLink()
         ycl.channel_url = channel_url
@@ -54,7 +56,7 @@ class SendYouTubeChannelView(LoginRequiredMixin, FormView):
         ycl.lang = lang
         ycl.save()
 
-        download_youtube_channel.delay(ycl.id)
+        download_youtube_channel.delay(ycl.id, proxy)
 
         messages.success(self.request, 'Link to the channel has been sent')
 
@@ -72,6 +74,7 @@ class SendYouTubeChannelsView(LoginRequiredMixin, FormView):
         channel_urls = form.cleaned_data['channel_urls']
         collection_key = form.cleaned_data['collection_key']
         lang = form.cleaned_data['lang']
+        proxy = form.cleaned_data['proxy']
 
         channels = channel_urls.split('\n')
 
@@ -82,7 +85,7 @@ class SendYouTubeChannelsView(LoginRequiredMixin, FormView):
             ycl.lang = lang
             ycl.save()
 
-            download_youtube_channel.delay(ycl.id)
+            download_youtube_channel.delay(ycl.id, proxy)
 
         messages.success(self.request, 'Links to the channels has been sent')
 

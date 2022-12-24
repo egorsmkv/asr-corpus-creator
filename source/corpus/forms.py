@@ -3,11 +3,18 @@ from os.path import exists
 from django import forms
 from django.forms import ValidationError
 
+from .models import get_proxies
+
 
 class SendLinkForm(forms.Form):
     link = forms.CharField(label='Link')
     collection_key = forms.CharField(label='Collection Key')
     lang = forms.CharField(label='Lang', max_length=2)
+    proxy = forms.ChoiceField(label='Proxy')
+
+    def __init__(self, *args, **kwargs):
+        super(forms.Form, self).__init__(*args, **kwargs)
+        self.fields['proxy'].choices = get_proxies()
 
     def clean_link(self):
         link = self.cleaned_data['link']
@@ -22,6 +29,11 @@ class SendYouTubeChannelForm(forms.Form):
     channel_url = forms.CharField(label='Channel URL')
     collection_key = forms.CharField(label='Collection Key')
     lang = forms.CharField(label='Lang', max_length=2)
+    proxy = forms.ChoiceField(label='Proxy')
+
+    def __init__(self, *args, **kwargs):
+        super(forms.Form, self).__init__(*args, **kwargs)
+        self.fields['proxy'].choices = get_proxies()
 
     def clean_channel_url(self):
         link = self.cleaned_data['channel_url']
@@ -36,6 +48,11 @@ class SendYouTubeChannelsForm(forms.Form):
     channel_urls = forms.CharField(widget=forms.Textarea, label='Channel URLs')
     collection_key = forms.CharField(label='Collection Key')
     lang = forms.CharField(label='Lang', max_length=2)
+    proxy = forms.ChoiceField(label='Proxy')
+
+    def __init__(self, *args, **kwargs):
+        super(forms.Form, self).__init__(*args, **kwargs)
+        self.fields['proxy'].choices = get_proxies()
 
 
 class SendAudioLinkForm(forms.Form):

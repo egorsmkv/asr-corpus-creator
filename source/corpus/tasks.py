@@ -202,7 +202,7 @@ def download_video(url, row_id):
 
 
 @shared_task
-def download_youtube_audio(url, row_id):
+def download_youtube_audio(url, row_id, proxy):
     row = YoutubeLink.objects.filter(id=row_id).get()
     print(f'Processing YoutubeLink ID: {row.id}')
 
@@ -225,7 +225,12 @@ def download_youtube_audio(url, row_id):
             youtube_downloader_cli = YT_DLP
         else:
             youtube_downloader_cli = YOUTUBE_DL
-        output = subprocess.Popen([youtube_downloader_cli, '-x', '--audio-format', 'm4a', '--audio-quality', '0', '-o', save_as_m4a, url])
+        
+        if proxy != '-':
+            output = subprocess.Popen([youtube_downloader_cli, '-x', '--proxy', proxy, '--audio-format', 'm4a', '--audio-quality', '0', '-o', save_as_m4a, url])
+        else:
+            output = subprocess.Popen([youtube_downloader_cli, '-x', '--audio-format', 'm4a', '--audio-quality', '0', '-o', save_as_m4a, url])
+
         output.communicate()
 
     # Set the row as exported
@@ -258,7 +263,7 @@ def download_youtube_audio(url, row_id):
 
 
 @shared_task
-def download_youtube_channel(row_id):
+def download_youtube_channel(row_id, proxy):
     row = YoutubeChannelLink.objects.filter(id=row_id).get()
     print(f'Processing YoutubeChannelLink ID: {row.id}')
 
@@ -277,10 +282,17 @@ def download_youtube_channel(row_id):
         os.makedirs(channel_path)
 
     # Use yt-dlp if youtube-dl is not set
+    youtube_downloader_cli = ''
     if len(YT_DLP) > 0:
-        cmd = [YT_DLP, '-f', 'm4a', '--audio-quality', '0', '--download-archive', f'/tmp/{row_id}_videos.txt', '-o', f'{channel_path}/%(id)s.%(ext)s', row.channel_url]
+        youtube_downloader_cli = YT_DLP
     else:
-        cmd = [YOUTUBE_DL, '-f', 'm4a', '--audio-quality', '0', '--download-archive', f'/tmp/{row_id}_videos.txt', '-o', f'{channel_path}/%(id)s.%(ext)s', row.channel_url]
+        youtube_downloader_cli = YOUTUBE_DL
+
+    if proxy != '-':
+        cmd = [youtube_downloader_cli, '-f', 'm4a', '--proxy', proxy, '--audio-quality', '0', '--download-archive', f'/tmp/{row_id}_videos.txt', '-o', f'{channel_path}/%(id)s.%(ext)s', row.channel_url]
+    else:
+        cmd = [youtube_downloader_cli, '-f', 'm4a', '--audio-quality', '0', '--download-archive', f'/tmp/{row_id}_videos.txt', '-o', f'{channel_path}/%(id)s.%(ext)s', row.channel_url]
+
     output = subprocess.Popen(cmd)
     output.communicate()
 
