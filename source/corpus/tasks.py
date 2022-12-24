@@ -36,6 +36,9 @@ SAMPLE_RATE = 16000
 
 W2V2_SERVER = 'tcp://localhost:5555'
 
+# Disable using GPU
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 # Fix the number of threads (as it is shown in Silero demo)
 torch.set_num_threads(1)
 
