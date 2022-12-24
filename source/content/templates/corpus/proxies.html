@@ -7,6 +7,16 @@
 
     <h4>{% trans 'Proxies' %}</h4>
 
+    <div class="alert alert-info">
+        Examples of proxies:
+        <br><br>
+        socks5://127.0.0.1:4444
+        <br>
+        socks4://127.0.0.1:4442
+        <br>
+        https://127.0.0.1:4441
+    </div>
+
     <form action="{% url 'corpus:proxies' %}" method="post">
 
         {% csrf_token %}
