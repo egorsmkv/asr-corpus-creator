@@ -173,6 +173,23 @@ python source/manage.py push_to_processing cv10 uk /Users/yehorsmoliakov/Downloa
 
 You can configure a CRON command to push new files with the above command.
 
+### Task monitoring
+
+If you want to monitor running tasks, then install Flower:
+
+```bash
+pip install flower
+```
+
+and run it like the following:
+
+```bash
+cd source
+nohup celery -A app flower -l INFO --concurrency 1 --port=5566 > /tmp/flower.log 2> /tmp/flower_errors.log < /dev/null &
+```
+
+then go to http://localhost:5566 to browse Flower.
+
 ### Export the data
 
 ```bash
