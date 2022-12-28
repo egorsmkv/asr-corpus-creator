@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from .tasks import download_youtube_audio, download_audio, download_video, process_local_folder, download_youtube_channel
 from .forms import SendLinkForm, SendYouTubeChannelForm, SendYouTubeChannelsForm, SendAudioLinkForm, SendVideoLinkForm, SendLocalFolderForm, CreateProxiesForm
 from .models import YoutubeLink, Utterance, AudioLink, VideoFile, SearchHistory, LocalFolder, YoutubeChannelLink, Proxy
+from .utils import sizeof_fmt
 
 
 class SendLinkView(LoginRequiredMixin, FormView):
@@ -217,6 +218,12 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
         summary_time_min = round(summary_time/60, 4)
         summary_time_hours = round(summary_time_min/60, 4)
 
+        summary_filesize = 0
+
+        summary = Utterance.objects.filter(collection_key=collection_key).aggregate(Sum('filesize'))
+        if summary['filesize__sum'] is not None:
+            summary_filesize = sizeof_fmt(float(summary['filesize__sum']))
+
         if sort is None:
             rows = Utterance.objects.filter(collection_key=collection_key).order_by('-id').all()
         elif sort == 'snr':
@@ -236,7 +243,17 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
         except EmptyPage:
             utterances  = paginator.page(paginator.num_pages)
 
-        return render(request, self.template_name, {'count_all': count_all, 'collection_key': collection_key, 'utterances': utterances, 'summary_time': summary_time, 'summary_time_min': summary_time_min, 'summary_time_hours': summary_time_hours})
+        ctx = {
+            'count_all': count_all,
+            'collection_key': collection_key, 
+            'utterances': utterances, 
+            'summary_time': summary_time, 
+            'summary_filesize': summary_filesize, 
+            'summary_time_min': summary_time_min, 
+            'summary_time_hours': summary_time_hours,
+        }
+
+        return render(request, self.template_name, ctx)
 
 
 class ProxiesView(LoginRequiredMixin, FormView):
