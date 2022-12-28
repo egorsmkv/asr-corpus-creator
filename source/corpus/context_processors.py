@@ -5,6 +5,11 @@ def inject_hostname(request):
         parts = host.split(':')
         host = parts[0]
 
+    schema = 'http'
+    
+    if request.is_secure():
+        schema = 'https'
+
     return {
-        'HOSTNAME': host,
+        'HOSTNAME': f'{schema}://{host}',
     }
