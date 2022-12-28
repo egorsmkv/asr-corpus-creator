@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7396705.svg)](https://doi.org/10.5281/zenodo.7396705)
 
-<a href="https://raw.githubusercontent.com/egorsmkv/asr-corpus-creator/main/screenshots/screen1.jpg"><img src="./screenshots/screen1.jpg" width="600"></a>
+<a href="https://raw.githubusercontent.com/egorsmkv/asr-corpus-creator/main/screenshots/screenshot.png"><img src="./screenshots/screenshot.png" width="600"></a>
 
 ## Overview
 
