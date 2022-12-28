@@ -89,6 +89,7 @@ class Utterance(models.Model):
     snr = models.FloatField(default=0)
     loudness = models.FloatField(default=0)
     srmr_ratio = models.FloatField(default=0)
+    filesize = models.FloatField(default=0)
     label_lang = models.CharField(max_length=2, default='--')
     audio_lang = models.CharField(max_length=2, default='--')
 

@@ -484,6 +484,10 @@ def recognize_chunks(audio_file_id):
             if isinstance(audio_lang, str):
                 audio_lang = audio_lang.upper()
 
+        # Get the filesize
+        fstats = os.stat(chunk.filename)
+        filesize = fstats.st_size
+
         # Save the utterance and delete the chunk row (in database)
         utt = Utterance()
         utt.collection_key = audio.collection_key
@@ -493,6 +497,7 @@ def recognize_chunks(audio_file_id):
         utt.loudness = loudness
         utt.srmr_ratio = srmr_ratio
         utt.filename = chunk.filename
+        utt.filesize = filesize
         utt.length = chunk.length
         utt.lang = audio.lang
         utt.snr = snr
