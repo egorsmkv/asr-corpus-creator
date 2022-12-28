@@ -4,7 +4,7 @@ import subprocess
 import librosa
 import torch
 import time
-from os.path import exists
+from os.path import exists, getsize
 from glob import glob
 from urllib.parse import urlparse
 
@@ -485,8 +485,7 @@ def recognize_chunks(audio_file_id):
                 audio_lang = audio_lang.upper()
 
         # Get the filesize
-        fstats = os.stat(chunk.filename)
-        filesize = fstats.st_size
+        filesize = getsize(chunk.filename)
 
         # Save the utterance and delete the chunk row (in database)
         utt = Utterance()
