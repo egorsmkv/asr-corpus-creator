@@ -1,6 +1,13 @@
 from django.db import models
 from django.conf import settings
 
+def sizeof_fmt(num, suffix="B"):
+    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
+
 
 class SearchHistory(models.Model):
     collection_key = models.CharField(max_length=50, default='-')
@@ -111,6 +118,9 @@ class Utterance(models.Model):
 
     def get_srmr_formatted(self):
         return round(self.srmr_ratio, 4)
+
+    def get_filesize_formatted(self):
+        return sizeof_fmt(self.filesize)
 
 
 class Proxy(models.Model):
