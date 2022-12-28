@@ -32,6 +32,9 @@ FFMPEG_PATH = os.getenv('FFMPEG_PATH', default='/usr/bin/ffmpeg')
 
 HF_TOKEN = os.getenv('HF_TOKEN', default='')
 
+MIN_UTTERANCE_DURATION = float(os.getenv('MIN_UTTERANCE_DURATION', default=0.5))
+MAX_UTTERANCE_DURATION = float(os.getenv('MAX_UTTERANCE_DURATION', default=15))
+
 SAMPLE_RATE = 16000
 
 W2V2_SERVER = 'tcp://localhost:5555'
@@ -397,6 +400,11 @@ def split_into_chunks(audio_file_id):
 
             # Determine the length of the file
             length = librosa.get_duration(filename=filename)
+
+            # Check duration limits
+            if length < MIN_UTTERANCE_DURATION or length > MAX_UTTERANCE_DURATION:
+                os.remove(filename)
+                continue
 
             ac = AudioChunk()
             ac.filename = filename
