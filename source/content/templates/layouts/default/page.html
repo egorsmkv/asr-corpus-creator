@@ -75,6 +75,10 @@
 
         <ul class="navbar-nav">
             {% if user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link" href="{%  %}">{% trans 'Flower' %}</a>
+            </li>
+
             <li class="nav-item"></li>
                 <a class="nav-link" href="{% url 'admin:login' %}">{% trans 'Admin panel' %}</a>
             </li>
