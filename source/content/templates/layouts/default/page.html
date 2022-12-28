@@ -76,7 +76,7 @@
         <ul class="navbar-nav">
             {% if user.is_superuser %}
             <li class="nav-item">
-                <a class="nav-link" href="{%  %}">{% trans 'Flower' %}</a>
+                <a class="nav-link" href="{{ HOSTNAME }}:5566">{% trans 'Flower' %}</a>
             </li>
 
             <li class="nav-item"></li>
