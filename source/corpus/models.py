@@ -114,6 +114,9 @@ class Utterance(models.Model):
     def get_srmr_formatted(self):
         return round(self.srmr_ratio, 4)
 
+    def get_duration_formatted(self):
+        return round(self.length, 4)
+
     def get_filesize_formatted(self):
         return sizeof_fmt(self.filesize)
 
