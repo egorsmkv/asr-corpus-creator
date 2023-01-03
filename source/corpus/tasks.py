@@ -281,7 +281,7 @@ def download_youtube_channel(row_id, proxy):
     path = f'{settings.MEDIA_ROOT}/audios'
     if not exists(path):
         os.makedirs(path)
-    
+
     # Create a folder for the channel
     channel_path = path + f'/channel_{row_id}'
     if not exists(channel_path):
@@ -385,8 +385,14 @@ def split_into_chunks(audio_file_id):
 
         print(f'Chunk: {ts_start} - {ts_end}')
 
+        # Check duration limits
+        if speech.duration < MIN_UTTERANCE_DURATION or speech.duration > MAX_UTTERANCE_DURATION:
+            continue
+
         # Get the detected speech
         chunk = wav[ts_start * 1000 : ts_end * 1000]
+
+        # Create a subfolder for chunks
         original_filename = audio.filename.split('/')[-1].replace('.wav', '')
         new_folder = f'{settings.MEDIA_ROOT}/audios/chunks/{original_filename}'
 
@@ -398,17 +404,9 @@ def split_into_chunks(audio_file_id):
         if not exists(filename):
             chunk.export(filename, format="wav")
 
-            # Determine the length of the file
-            length = librosa.get_duration(filename=filename)
-
-            # Check duration limits
-            if length < MIN_UTTERANCE_DURATION or length > MAX_UTTERANCE_DURATION:
-                os.remove(filename)
-                continue
-
             ac = AudioChunk()
             ac.filename = filename
-            ac.length = length
+            ac.length = speech.duration
             ac.audio = audio
             ac.save()
 
@@ -420,7 +418,7 @@ def split_into_chunks(audio_file_id):
     if exists(audio.filename):
         os.remove(audio.filename)
 
-    # Send chunks into recognition
+    # Send chunks to recognition
     recognize_chunks.delay(audio.id)
 
 
