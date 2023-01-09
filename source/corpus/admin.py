@@ -7,7 +7,12 @@ class UtteranceAdmin(admin.ModelAdmin):
     list_filter = ['collection_key']
 
 
+class YoutubeChannelLinkAdmin(admin.ModelAdmin):
+    list_filter = ['is_exported']
+
+
 admin.site.register(YoutubeLink)
+admin.site.register(YoutubeChannelLink, YoutubeChannelLinkAdmin)
 admin.site.register(AudioFile)
 admin.site.register(VideoFile)
 admin.site.register(AudioChunk)
