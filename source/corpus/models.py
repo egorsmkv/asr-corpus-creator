@@ -28,7 +28,7 @@ class YoutubeChannelLink(models.Model):
     lang = models.CharField(max_length=2, default='-')
 
     def __str__(self):
-        return self.link
+        return self.channel_url
 
 
 class LocalFolder(models.Model):
