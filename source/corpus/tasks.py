@@ -431,6 +431,12 @@ def recognize_chunks(audio_file_id):
     for chunk in chunks:
         print(chunk)
 
+        # Check existence of an utterance
+        exists = Utterance.objects.filter(audio=audio, filename=chunk.filename).exists()
+        if exists:
+            print(chunk, 'exists in utternaces, skipping')
+            continue
+
         # Encode the file into base64
         with open(chunk.filename, 'rb') as f:
             out_data = f.read()
