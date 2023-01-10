@@ -431,6 +431,11 @@ def recognize_chunks(audio_file_id):
     for chunk in chunks:
         print(chunk)
 
+        # Check duration limits
+        if chunk.length < MIN_UTTERANCE_DURATION or chunk.length > MAX_UTTERANCE_DURATION:
+            print(chunk, 'is long')
+            continue
+        
         # Check existence of an utterance
         exists = Utterance.objects.filter(audio=audio, filename=chunk.filename).exists()
         if exists:
