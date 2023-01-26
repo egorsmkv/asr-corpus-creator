@@ -1,3 +1,7 @@
+"""
+Author: Volodymyr Kyrylov <vol@wilab.org.ua≥
+"""
+
 import kenlm
 import functools
 
