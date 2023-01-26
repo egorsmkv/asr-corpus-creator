@@ -94,6 +94,7 @@ class Utterance(models.Model):
     filesize = models.FloatField(default=0)
     label_lang = models.CharField(max_length=2, default='--')
     audio_lang = models.CharField(max_length=2, default='--')
+    audio_type = models.CharField(max_length=50, default='--')
 
     created_at = models.DateTimeField(auto_now_add=True)
     
