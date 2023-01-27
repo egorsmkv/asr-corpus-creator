@@ -198,6 +198,7 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
 
     def get(self, request):
         collection_key = request.GET.get('collection_key')
+        audio_type = request.GET.get('audio_type')
         sort = request.GET.get('sort')
 
         search_history_count_all = SearchHistory.objects.filter(collection_key=collection_key).count()
@@ -205,10 +206,16 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
             sh = SearchHistory()
             sh.collection_key = collection_key
             sh.save()
+        
+        distinct_audio_types = Utterance.objects.filter(collection_key=collection_key).values('audio_type').distinct()
 
-        count_all = Utterance.objects.filter(collection_key=collection_key).count()
+        if audio_type:
+            count_all = Utterance.objects.filter(collection_key=collection_key, audio_type=audio_type).count()
+            summary = Utterance.objects.filter(collection_key=collection_key, audio_type=audio_type).aggregate(Sum('length'))
+        else:
+            count_all = Utterance.objects.filter(collection_key=collection_key).count()
+            summary = Utterance.objects.filter(collection_key=collection_key).aggregate(Sum('length'))
 
-        summary = Utterance.objects.filter(collection_key=collection_key).aggregate(Sum('length'))
         if summary['length__sum'] is None:
             messages.warning(self.request, 'No records yet with this collection key')
 
@@ -220,18 +227,28 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
 
         summary_filesize = 0
 
-        summary = Utterance.objects.filter(collection_key=collection_key).aggregate(Sum('filesize'))
+        if audio_type:
+            summary = Utterance.objects.filter(collection_key=collection_key, audio_type=audio_type).aggregate(Sum('filesize'))
+        else:
+            summary = Utterance.objects.filter(collection_key=collection_key).aggregate(Sum('filesize'))
         if summary['filesize__sum'] is not None:
             summary_filesize = sizeof_fmt(float(summary['filesize__sum']))
 
-        if sort is None:
-            rows = Utterance.objects.filter(collection_key=collection_key).order_by('-id').all()
-        elif sort == 'snr':
-            rows = Utterance.objects.filter(collection_key=collection_key).order_by('-snr').all()
+        if sort == 'snr':
+            if audio_type:
+                rows = Utterance.objects.filter(collection_key=collection_key, audio_type=audio_type).order_by('-snr').all()
+            else:
+                rows = Utterance.objects.filter(collection_key=collection_key).order_by('-snr').all()
         elif sort == 'length':
-            rows = Utterance.objects.filter(collection_key=collection_key).order_by('-length').all()
+            if audio_type:
+                rows = Utterance.objects.filter(collection_key=collection_key, audio_type=audio_type).order_by('-length').all()
+            else:
+                rows = Utterance.objects.filter(collection_key=collection_key).order_by('-length').all()
         else:
-            rows = Utterance.objects.filter(collection_key=collection_key).order_by('-id').all()
+            if audio_type:
+                rows = Utterance.objects.filter(collection_key=collection_key, audio_type=audio_type).order_by('-id').all()
+            else:
+                rows = Utterance.objects.filter(collection_key=collection_key).order_by('-id').all()
 
         paginator = Paginator(rows, 10)
 
@@ -244,8 +261,10 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
             utterances  = paginator.page(paginator.num_pages)
 
         ctx = {
+            'distinct_audio_types': distinct_audio_types,
             'count_all': count_all,
             'collection_key': collection_key, 
+            'audio_type': audio_type,
             'utterances': utterances, 
             'summary_time': summary_time, 
             'summary_filesize': summary_filesize, 
@@ -254,6 +273,7 @@ class SearchUtterancesView(LoginRequiredMixin, TemplateView):
         }
 
         return render(request, self.template_name, ctx)
+
 
 
 class ProxiesView(LoginRequiredMixin, FormView):
