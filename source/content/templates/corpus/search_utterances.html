@@ -12,10 +12,26 @@
 
     Sort:
     <ul>
-        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=snr">SNR</a> </li>
-        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=length">Duration</a> </li>
-        <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=srmr_ratio">SRMR ratio</a> </li>
+        {% if audio_type %}
+            <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ audio_type }}&sort=snr">SNR</a> </li>
+            <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ audio_type }}&sort=length">Duration</a> </li>
+            <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ audio_type }}&sort=srmr_ratio">SRMR ratio</a> </li>
+        {% else %}
+            <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=snr">SNR</a> </li>
+            <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=length">Duration</a> </li>
+            <li> <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&sort=srmr_ratio">SRMR ratio</a> </li>
+        {% endif %}
     </ul>
+
+    {% if distinct_audio_types %}
+        Audio types:
+        <br>
+        {% for row in distinct_audio_types %}
+           <a class="btn btn-sm btn-success" href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ row.audio_type }}">{{ row.audio_type }}</a>
+        {% endfor %}
+        <br>
+        <br>
+    {% endif %}
 
     <div class="card mb-2">
         <div class="card-body">
@@ -57,6 +73,8 @@
             Label lang: <b>{{ utterance.label_lang }}</b>
             <br>
             Audio lang: <b>{{ utterance.audio_lang }}</b>
+            <br>
+            Audio type: <a href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ utterance.audio_type }}"><b>{{ utterance.audio_type }}</b></a>
         </div>
     </div>
 
