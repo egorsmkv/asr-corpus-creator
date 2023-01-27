@@ -208,6 +208,16 @@ python source/manage.py classify_utterances yt-split7 cpu
 python source/manage.py classify_utterances yt-split7 cuda:0
 ```
 
+Or to classify all utterances:
+
+```bash
+python source/manage.py classify_all_utterances <device_id>
+
+# for example:
+python source/manage.py classify_all_utterances cpu
+python source/manage.py classify_all_utterances cuda:0
+```
+
 This command will classify utternaces using the AST model to get content type (Speech, Music, Bicycle bell, etc) from audio files.
 
 [1]: https://ai.facebook.com/blog/pseudo-labeling-speech-recognition-using-multilingual-unlabeled-data/
