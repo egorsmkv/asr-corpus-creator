@@ -18,6 +18,7 @@ This app is intended to automatically create a corpus for ASR systems using [pse
   - Label language detection
   - Audio language detection
   - SRMR ratio (measure reverberation)
+  - Audio type (Speech, Music, etc)
 - Export labeled data using a console
 - `whisper`, `wav2vec2`, or `NeMo` as an ASR backend
 
