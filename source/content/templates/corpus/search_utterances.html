@@ -27,7 +27,7 @@
         Audio types:
         <br>
         {% for row in distinct_audio_types %}
-           <a class="btn btn-sm btn-success" href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ row.audio_type }}">{{ row.audio_type }}</a>
+           <a class="btn btn-sm btn-success mb-2" href="/corpus/search-utterances/?collection_key={{ collection_key }}&audio_type={{ row.audio_type }}">{{ row.audio_type }}</a>
         {% endfor %}
         <br>
         <br>
