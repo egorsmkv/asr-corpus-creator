@@ -198,4 +198,16 @@ FILES_DIR=/Users/yehorsmoliakov/Work/asr-corpus-creator/source/content/media/aud
 
 - **test_it2** is the collection_key argument.
 
+### Classify utterances to get content audio type
+
+```bash
+python source/manage.py classify_utterances <collection_type> <device_id>
+
+# for example:
+python source/manage.py classify_utterances yt-split7 cpu
+python source/manage.py classify_utterances yt-split7 cuda:0
+```
+
+This command will classify utternaces using the AST model to get content type (Speech, Music, Bicycle bell, etc) from audio files.
+
 [1]: https://ai.facebook.com/blog/pseudo-labeling-speech-recognition-using-multilingual-unlabeled-data/
