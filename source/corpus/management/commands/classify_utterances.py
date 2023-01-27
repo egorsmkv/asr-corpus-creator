@@ -1,6 +1,7 @@
 import os
 import torch
 import torchaudio
+from os.path import exists
 
 from django.core.management.base import BaseCommand
 
@@ -35,6 +36,9 @@ class Command(BaseCommand):
         for utterance in utterances:
             # skip a classified utterance
             if utterance.audio_type != '--':
+                continue
+
+            if not exists(utterance.filename):
                 continue
 
             # load file
