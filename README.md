@@ -1,3 +1,6 @@
+> [!NOTE]
+> This project is moved to https://github.com/egorsmkv/asr-cc
+
 # ASR Corpus Creator
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7396705.svg)](https://doi.org/10.5281/zenodo.7396705)
